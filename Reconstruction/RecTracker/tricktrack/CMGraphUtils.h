@@ -19,18 +19,12 @@ inline CMGraph createGraph(std::vector<std::vector<std::string>> graphList, std:
   // the vectors for each layer that need to be filled
   std::map<std::string, std::set<int>> outerLayersMap;
   std::map<std::string, std::set<int>> innerLayersMap;
-  std::map<std::string, std::set<int>> outerLayerPairsMap;
-  std::map<std::string, std::set<int>> innerLayerPairsMap;
 
   // get a list of unique layers (and root layers)
   for (auto layerPath: graphList) {
     uniqueRootLayers.insert(layerPath[0]);
     for (auto layerName: layerPath) {
       uniqueLayers.insert(layerName);
-      outerLayerPairsMap.insert(std::make_pair(layerName, std::set<int>()));
-      innerLayerPairsMap.insert(std::make_pair(layerName, std::set<int>()));
-      outerLayerPairsMap.insert(std::make_pair(layerName, std::set<int>()));
-      innerLayerPairsMap.insert(std::make_pair(layerName, std::set<int>()));
     }
   }
 
@@ -51,7 +45,6 @@ inline CMGraph createGraph(std::vector<std::vector<std::string>> graphList, std:
       if (i < layerPath.size() - 1) {
        outerLayersMap[layerName].insert(layerName2Index[layerPath[i+1]]);
       }
-      uniqueLayers.insert(layerName);
     }
   }
 
