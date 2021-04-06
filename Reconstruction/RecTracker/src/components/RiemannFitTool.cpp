@@ -52,7 +52,7 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
     unsigned int l_trackId = (*theHits)[(*it1).second].core().bits;
     // Go through the range
     for (auto it2 = range.first; it2 != range.second; ++it2) {
-       //track.addhits((*theHits)[(*it2).second]); // TODO: reenable once new edm version available
+       track.addhits((*theHits)[(*it2).second]); // TODO: reenable once new edm version available
 
       std::cout <<"trackIds: " << l_trackId << "\t" << std::endl;
       if (l_trackId != (*theHits)[(*it2).second].core().bits) {

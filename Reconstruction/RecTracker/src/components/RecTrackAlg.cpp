@@ -61,6 +61,7 @@ StatusCode RecTrackAlg::execute() {
     pEdm.bits(p.bits());
     pEdm.charge(p.charge());
     pEdm.p4(p.p4());
+    pEdm.addtracks(track);
   }
   m_tracks.put(tracksAndTrackstates.first);
   m_trackStates.put(tracksAndTrackstates.second);
