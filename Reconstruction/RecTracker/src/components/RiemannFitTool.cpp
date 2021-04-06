@@ -74,9 +74,7 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
         auto hitDim = std::min(hitCounter, nhits);
         auto resizedHits = riemannHits.block(0, 0, 3, hitDim);
         tricktrack::Matrix3Nd hits_cov = m_hitRes * tricktrack::Matrix3Nd::Identity(3 * hitDim, 3 * hitDim);
-
-        constexpr double l_cSpeed = Gaudi::Units::c_light / Gaudi::Units::m * Gaudi::Units::s;
-        const double l_bFfieldGeVCmC = m_Bz * l_cSpeed / pow(10, 9) / 100;  // conversion to GeV / cm / c
+        const double l_bFfieldGeVCmC = m_Bz * Gaudi::Units::c_light * Gaudi::Units::mm / Gaudi::Units::GeV;  // conversion to GeV / mm / c
         auto h = tricktrack::Helix_fit(resizedHits, hits_cov, l_bFfieldGeVCmC, m_calcErrors, m_calcMultipleScattering);
         debug() << "Fit parameters: " << h.par(0) << "\t" << h.par(1) << "\t" << h.par(2) << "\t" << h.par(3) << "\t"
                 << h.par(4) << endmsg;

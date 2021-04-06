@@ -3,6 +3,7 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/PhysicalConstants.h"
 
 // FCCSW
 #include "FWCore/DataHandle.h"
@@ -28,8 +29,8 @@ public:
             std::multimap<unsigned int, unsigned int> seedmap) override final;
 
 private:
-  Gaudi::Property<double> m_Bz{this, "Bz", 4., "Field strength along Z"};
-  Gaudi::Property<double> m_hitRes{this, "hitRes", 1e-8, "Resolution of local hit coordinates"};
+  Gaudi::Property<double> m_Bz{this, "Bz", 4. * Gaudi::Units::tesla, "Field strength along Z"};
+  Gaudi::Property<double> m_hitRes{this, "hitRes", 1e-8 * Gaudi::Units::mm, "Resolution of local hit coordinates"};
   Gaudi::Property<bool> m_doFit{this, "doFit", true, "flag to actually perform the fit"};
   Gaudi::Property<bool> m_calcErrors{this, "calcErrors", true, "flag to actually calculate errors"};
   Gaudi::Property<bool> m_fitOnlyPrimary{this, "fitOnlyPrimary", false, "flag to only fit the particle with trackID 1"};
