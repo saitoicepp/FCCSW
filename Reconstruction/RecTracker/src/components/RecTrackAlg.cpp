@@ -23,7 +23,7 @@ fcc::Particle TrackState2Particle(fcc::Track aTrack) {
     auto& p4 = theParticle.p4();
     p4.px = 1. / std::abs(aState.qOverP()) * std::cos(aState.phi());
     p4.py = 1. / std::abs(aState.qOverP()) * std::sin(aState.phi());
-    p4.pz = std::tan(aState.theta()) * 1 / std::abs(aState.qOverP());
+    p4.pz = 1. / std::abs(aState.qOverP()) / std::tan(aState.theta());
   }
   return theParticle;
 }
