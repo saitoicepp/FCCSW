@@ -36,6 +36,7 @@ private:
   Gaudi::Property<bool> m_fitOnlyPrimary{this, "fitOnlyPrimary", false, "flag to only fit the particle with trackID 1"};
   Gaudi::Property<bool> m_calcMultipleScattering{this, "MultipleScatteringErrors", false,
                                                  "flag to toggle estimation of multiple scattering errors"};
+  Gaudi::Property<bool> m_saveOnlyValidFit{this, "saveOnlyValidFit", false, "flag to save only tracks that succeeds fitting"};
 };
 
 #endif /* RECTRACKER_RIEMANNFITTOOL_H */

@@ -204,11 +204,11 @@ public:
     // it has no compatible neighbor
     // the ntuplets is then saved if the number of hits it contains is greater than a threshold
     
-    if (tmpNtuplet.size() == minHitsPerNtuplet - 1)
+    if (tmpNtuplet.size() >= minHitsPerNtuplet - 1)
       {
 	foundNtuplets.push_back(tmpNtuplet);
       }
-    else
+    //else
       {
 	unsigned int numberOfOuterNeighbors = theOuterNeighbors.size();
 	for (unsigned int i = 0; i < numberOfOuterNeighbors; ++i) {

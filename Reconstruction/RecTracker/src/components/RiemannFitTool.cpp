@@ -43,8 +43,8 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
   decltype(seedmap.equal_range(0)) range;
   for (auto it1 = seedmap.begin(); it1 != seedmap.end(); it1 = range.second) {
     tricktrack::Matrix3xNd riemannHits = tricktrack::Matrix3xNd::Zero(3, nhits);
-    auto track = tracks->create();
-    auto trackState = trackStates->create();
+    auto track = fcc::Track();
+    auto trackState = fcc::TrackState();
     unsigned int hitCounter = 0;
     // Get the range of the current TrackID
     range = seedmap.equal_range(it1->first);
@@ -54,7 +54,7 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
     for (auto it2 = range.first; it2 != range.second; ++it2) {
        track.addhits((*theHits)[(*it2).second]); // TODO: reenable once new edm version available
 
-      std::cout <<"trackIds: " << l_trackId << "\t" << std::endl;
+      // std::cout <<"trackIds: " << l_trackId << "\t" << std::endl;
       if (l_trackId != (*theHits)[(*it2).second].core().bits) {
         l_trackId = 0;
       }
@@ -72,10 +72,19 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
     if (m_doFit) {
       if ((!m_fitOnlyPrimary) || (*it1).first == 1) {
         auto hitDim = std::min(hitCounter, nhits);
+        info() << "hitDim : " << hitDim << endmsg;
+        if(hitDim >= 9){
+            debug() << "Rieman fit can handle up to 8 hits" << endmsg;
+            continue;
+        }
         auto resizedHits = riemannHits.block(0, 0, 3, hitDim);
         tricktrack::Matrix3Nd hits_cov = m_hitRes * tricktrack::Matrix3Nd::Identity(3 * hitDim, 3 * hitDim);
         const double l_bFfieldGeVCmC = m_Bz * Gaudi::Units::c_light * Gaudi::Units::mm / Gaudi::Units::GeV;  // conversion to GeV / mm / c
         auto h = tricktrack::Helix_fit(resizedHits, hits_cov, l_bFfieldGeVCmC, m_calcErrors, m_calcMultipleScattering);
+        if(isnan(h.par(0))){
+            debug() << "Helix_fit failed. Does not save the track" << endmsg;
+            continue;
+        }
         debug() << "Fit parameters: " << h.par(0) << "\t" << h.par(1) << "\t" << h.par(2) << "\t" << h.par(3) << "\t"
                 << h.par(4) << endmsg;
         debug() << "Fit charge: " << h.q << "\t"
@@ -103,7 +112,18 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
         //trackState.theta(h.par(3));
         trackState.z0(h.par(4));
         track.addstates(trackState);
+        track.chi2(h.chi2_circle + h.chi2_line);
+        track.ndf(hitDim * 2);
+
+        if(m_saveOnlyValidFit){
+          tracks->push_back(track);
+          trackStates->push_back(trackState);
+        }
       }
+    }
+    if(!m_saveOnlyValidFit){
+      tracks->push_back(track);
+      trackStates->push_back(trackState);
     }
   }
 

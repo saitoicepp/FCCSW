@@ -192,9 +192,9 @@ TrickTrackSeedingTool::findSeeds(const fcc::PositionedTrackHitCollection* theHit
         l_trackId = -1;
       }
     }
-    auto l_id4 = cells[tracklet[minNumberOfHits - 2]].getOuterHit().identifier();
-    theSeeds.insert(std::pair<unsigned int, unsigned int>(trackletCounter, l_id4));
-    if (l_trackId != (long int) (*theHits)[l_id4].core().bits) {
+    auto l_id_last = cells[tracklet.back()].getOuterHit().identifier();
+    theSeeds.insert(std::pair<unsigned int, unsigned int>(trackletCounter, l_id_last));
+    if (l_trackId != (long int) (*theHits)[l_id_last].core().bits) {
        l_trackId = -1;
     }
     if (l_trackId != -1) { // all the trackIds were identical, a correctly identified track

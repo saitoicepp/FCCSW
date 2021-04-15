@@ -22,7 +22,8 @@ public:
 private:
   Gaudi::Property<std::vector<std::vector<std::string>>> m_layerPaths {this, "layerPaths", {{
   
-      {"b01", "b02", "b03", "b04", "b05", "b06", "b11", "b12", "b13", "b14", "b15", "b16"},
+      // {"b01", "b02", "b03", "b04", "b05", "b06", "b11", "b12", "b13", "b14", "b15", "b16"},
+      {"b01", "b02", "b03", "b04", "b05", "b06", "b11", "b12"},
   
   }} };
 };
