@@ -46,6 +46,7 @@ private:
   DataHandle<fcc::TrackHitCollection> m_trackHits{"trackHits", Gaudi::DataHandle::Reader, this};
   DataHandle<fcc::PositionedTrackHitCollection> m_smearedTrackHits{"smearedHits", Gaudi::DataHandle::Writer, this};
   Gaudi::Property<std::string> m_readoutName{this, "readoutName", "", "Name of the readout (hits collection) to save"};
+  Gaudi::Property<double> m_force_shift_r{this, "forceShiftR", 0., "Force to shift hit position along radius direction"};
 
 };
 

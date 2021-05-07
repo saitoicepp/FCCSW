@@ -98,7 +98,8 @@ StatusCode FastSimpleDigi::execute() {
     hitCore.time /= itr.second.size();
 
     dd4hep::DDSegmentation::CellID cID = hitCore.cellId;
-    std::array<double, 3> localPos = {x * m_segGridSizeX, 0, z * m_segGridSizeZ};
+    // FIXME: shift value should be determined based on sensor thickness automatically.
+    std::array<double, 3> localPos = {x * m_segGridSizeX, +m_force_shift_r * MM_2_CM, z * m_segGridSizeZ};
     // global coordinates, will be filled by the transform
     std::array<double, 3> globalPos = {0, 0, 0};
     // direct lookup of transformation in the volume manager is broken in dd4hep
