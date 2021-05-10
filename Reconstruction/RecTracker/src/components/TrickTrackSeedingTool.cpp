@@ -75,41 +75,45 @@ void TrickTrackSeedingTool::findDoublets(tricktrack::HitDoublets<Hit>* doublets,
     double currentZ = theInnerHits[i].z();
     double currentRho = theInnerHits[i].rho();
     double currentT = theInnerHits[i].t();
-    
+
     TTPoint minPoint(currentRho - m_deltaRho, currentPhi - m_deltaPhi, currentZ - m_deltaZ, currentT - m_deltaT,0);
     TTPoint maxPoint(currentRho + m_deltaRho, currentPhi + m_deltaPhi,  currentZ + m_deltaZ, currentT + m_deltaT,0);
 
-    //std::vector<unsigned int> result;
-    //theOuterTree.search(minPoint, maxPoint, result);
+    // FKDTree buggy?
+    // std::vector<unsigned int> result;
+    // theOuterTree.search(minPoint, maxPoint, result);
+    // for(auto j : result){
     for(unsigned int j = 0; j < theOuterHits.size(); ++j) {
 
-      if ((M_PI - std::abs(std::abs(theOuterHits[j].phi() - theInnerHits[i].phi()) - M_PI)) < m_deltaPhi) {
-        if (std::abs(theOuterHits[j].z() - theInnerHits[i].z()) < m_deltaZ) {
-          if ( theOuterHits[j].t() - theInnerHits[i].t() > 0 && std::abs(theOuterHits[j].t() - theInnerHits[i].t()) < m_deltaT) {
-            doublets->add(i, j);
-          }
-        }
-        
-      }
+      if ((M_PI - std::abs(std::abs(theOuterHits[j].phi() - theInnerHits[i].phi()) - M_PI)) > m_deltaPhi) continue;
+      if (std::abs(theOuterHits[j].z() - theInnerHits[i].z()) > m_deltaZ) continue;
+      if (theOuterHits[j].t() - theInnerHits[i].t() <= 0 ) continue;
+      if (std::abs(theOuterHits[j].t() - theInnerHits[i].t()) > m_deltaT) continue;
+
+      doublets->add(i, j);
     }
   }
 }
 
 void TrickTrackSeedingTool::createBarrelSpacePoints(std::vector<Hit>& thePoints,
-                                                       const fcc::PositionedTrackHitCollection* theHits) {
+                                                    const fcc::PositionedTrackHitCollection* theHits) {
   size_t hitCounter = 0;
   std::set<int> trackIdsInThisLayer;
   for (auto hit : *theHits) {
     if (m_hitFilterTool->filter(hit.core())) {
-        auto result = trackIdsInThisLayer.insert(hit.core().bits);
-        if (result.second || !m_cleanHits) {
-        thePoints.emplace_back(std::sqrt(std::pow(hit.position().x,2) + std::pow(hit.position().y,2)), // hit r
-        std::atan2(hit.position().y, hit.position().x), // hit phi 
-        hit.position().z, hit.core().time, hitCounter);
-        }
-
+      auto result = trackIdsInThisLayer.insert(hit.core().bits);
+      if (result.second || !m_cleanHits) {
+        auto r = std::sqrt(std::pow(hit.position().x,2) + std::pow(hit.position().y,2));
+        auto z = hit.position().z;
+        auto theta = atan2(r, z);
+        auto eta = -log(tan(theta/2.));
+        auto phi = std::atan2(hit.position().y, hit.position().x);
+        if ( fabs(eta) > m_hit_etaCut) continue;
+        if ( hit.core().energy < m_hit_energyCut) continue;
+        thePoints.emplace_back(r, phi, z, hit.core().time, hitCounter);
       }
-        ++hitCounter;
+    }
+    ++hitCounter;
   }
 }
 

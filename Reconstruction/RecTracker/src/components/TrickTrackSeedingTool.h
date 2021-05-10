@@ -76,6 +76,9 @@ private:
 
   Gaudi::Property<bool> m_cleanHits {this, "cleanHits", true};
 
+  Gaudi::Property<double> m_hit_etaCut {this, "hitEtaCut", 999.};
+  Gaudi::Property<double> m_hit_energyCut {this, "hitEnergyCut", 999.};
+
   int m_goodTracklets = 0;
   int m_totalTracklets = 0;
 
