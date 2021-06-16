@@ -32,6 +32,24 @@ StatusCode RiemannFitTool::initialize() {
   return sc;
 }
 
+bool RiemannFitTool::trackSelection(
+    const fcc::Track& track,
+    const fcc::TrackState& trackState
+){
+    if(!m_applyTrackSelection) return true;
+
+    auto pt = fabs(1./trackState.qOverP());
+    auto eta = -log(tan(trackState.theta() / 2));
+    if(pt < m_cut_track_pt) return false;
+    if(fabs(eta) > m_cut_track_eta) return false;
+    if(fabs(trackState.d0()) > m_cut_track_d0) return false;
+    if(fabs(trackState.z0()) > m_cut_track_z0) return false;
+    if(track.chi2() < m_cut_track_chi2) return false;
+    if(track.chi2() / track.ndf() < m_cut_track_chi2ndf) return false;
+
+    return true;
+}
+
 std::pair<fcc::TrackCollection*, fcc::TrackStateCollection*>
 RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
                           std::multimap<unsigned int, unsigned int> seedmap) {
@@ -115,13 +133,13 @@ RiemannFitTool::fitTracks(const fcc::PositionedTrackHitCollection* theHits,
         track.chi2(h.chi2_circle + h.chi2_line);
         track.ndf(hitDim * 2);
 
-        if(m_saveOnlyValidFit){
+        if(m_saveOnlyValidFit && trackSelection(track, trackState)){
           tracks->push_back(track);
           trackStates->push_back(trackState);
         }
       }
     }
-    if(!m_saveOnlyValidFit){
+    if(!m_saveOnlyValidFit && trackSelection(track, trackState)){
       tracks->push_back(track);
       trackStates->push_back(trackState);
     }
